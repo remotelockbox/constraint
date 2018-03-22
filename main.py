@@ -10,7 +10,7 @@ def roll(sides=6):
 def choose_many(choices):
     chosen = []
     for choice in choices:
-        if roll(100) >= choice['odds']:
+        if roll(100) <= choice['odds']:
             chosen.append(choice)
     return chosen
 
@@ -52,7 +52,12 @@ def instruction_filter(step, inventory, selection=None):
     if 'category' in step:
         selection = inventory.select_category(step['category'], selection)
     if 'not_category' in step:
-        selection = inventory.select_not_category(step['not_category'], selection)
+        condition = step['not_category']
+        if isinstance(condition, str):
+            selection = inventory.select_not_category(step['not_category'], selection)
+        else:
+            for c in condition:
+                selection = inventory.select_not_category(c, selection)
     return selection
 
 
@@ -114,6 +119,9 @@ def run2(seed=None, scenario_name=None):
             describe_if_not_none(instruction['description'], choose_one(selection))
         elif 'choose_many' in instruction:
             selection = instruction_filter(instruction['choose_many'], inventory)
+            print_choices(instruction['description'], choose_many(selection))
+        elif 'choose_many_of' in instruction:
+            selection = instruction['choose_many_of']
             print_choices(instruction['description'], choose_many(selection))
         elif len(instruction) == 1:
             print(instruction['description'])
