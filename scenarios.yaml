@@ -1,0 +1,49 @@
+scenarios:
+  - name: caged
+    odds: 65
+    instructions:
+      - description: "Put on"
+        choose_one:
+          class: clothing
+      - description: "Lock on a"
+        choose_one:
+          class: headwear
+          not_category: bondage
+      - description: "Accessories:"
+        choose_many:
+          class: accessories
+      - description: "You will be locked in the cage for"
+        choose_one_of:
+          - description: "10 minutes. You must roll again after your punishment is complete."
+            odds: 10
+          - description: "15 minutes"
+            odds: 10
+          - description: "20 minutes"
+            odds: 10
+          - description: "25 minutes"
+            odds: 10
+          - description: "30 minutes"
+            odds: 10
+
+  - name: caged_punished
+    odds: 35
+    instructions:
+      - description: "You will be punished!"
+      - description: "You will be"
+        choose_one_of:
+          - description: "bound with your arms and legs tied to sides of the cage"
+            odds: 10
+          - description: "bound with your arms behind your back cuffed to the cage"
+            odds: 10
+          - description: "confined in a loose straitjacket"
+            odds: 10
+      - description: "Put on"
+        choose_one:
+          class: clothing
+      - description: "Lock on a"
+        choose_one:
+          class: headwear
+          category: bondage
+      - description: "Accessories:"
+        choose_many:
+          class: accessories

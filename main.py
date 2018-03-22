@@ -21,82 +21,102 @@ def print_choices(heading, chosen):
         print(heading)
     for choice in chosen:
         print('  ' + choice['description'])
+    print()
 
 
 def describe_if_not_none(prefix, choice):
-    if choice is not None and choice['name'] != 'none':
+    if choice is not None and ('name' not in choice or choice['name'] != 'none'):
         print(prefix + ' ' + choice['description'])
 
 
-def choose_weighted(choices):
-    total_weight = sum([x['choice_weight'] for x in choices])
+def choose_one(choices):
+    total_weight = sum([x['odds'] for x in choices])
 
     result = roll(total_weight)
 
     acc = 0
     for choice in choices:
-        acc += choice['choice_weight']
+        acc += choice['odds']
         if acc is not None and acc >= result:
             return choice
 
-    print("could not find choice with total weight {}, roll {}".format(total_weight, result))
+    print("could not find choice with total odds {}, roll {}".format(total_weight, result))
+
+
+def instruction_filter(step, inventory, selection=None):
+    if selection is None:
+        selection = inventory.data
+
+    if 'class' in step:
+        selection = inventory.select_class(step['class'], selection)
+    if 'category' in step:
+        selection = inventory.select_category(step['category'], selection)
+    if 'not_category' in step:
+        selection = inventory.select_not_category(step['not_category'], selection)
+    return selection
 
 
 class Inventory:
     def __init__(self, data):
         self.data = data
 
-    def select_class(self, classname):
-        return [x for x in self.data if x['class'] == classname]
+    def select_class(self, classname, data=None):
+        if data is None:
+            data = self.data
+        return [x for x in data if x['class'] == classname]
+
+    def select_category(self, category, data=None):
+        if data is None:
+            data = self.data
+        return [x for x in data if 'categories' in x and category in x['categories']]
+
+    def select_not_category(self, category, data=None):
+        if data is None:
+            data = self.data
+        return [x for x in data if 'categories' not in x or category not in x['categories']]
 
     def choose_class(self, classname):
-        return choose_weighted(self.select_class(classname))
+        return choose_one(self.select_class(classname))
 
 
-def load(path='inventory.yaml'):
+def load(path, root):
     with open(path) as f:
-        return Inventory(yaml.safe_load(f)['inventory'])
+        return yaml.safe_load(f)[root]
 
 
-def run2(seed = None, punished=None):
-    inventory = load()
+def run2(seed=None, scenario_name=None):
+    inventory = Inventory(load('inventory.yaml', 'inventory'))
+    scenarios = load('scenarios.yaml', 'scenarios')
 
     if seed is not None:
         random.seed(seed)
 
+    if scenario_name is None:
+        scenario = choose_one(scenarios)
+    else:
+        candidates = [s for s in scenarios if s['name'] == scenario_name]
+        if len(candidates) == 0:
+            print("Could not find scenario named '{}'".format(scenario_name))
+            return
+        if len(candidates) > 1:
+            print("Found multiple scenarios named '{}'".format(scenario_name))
+            return
+        scenario = candidates[0]
+
     print("Instructions:\n")
 
-    describe_if_not_none('Put on', inventory.choose_class('clothing'))
-    head_choice = inventory.choose_class('headwear')
-    describe_if_not_none('Lock on a', head_choice)
-
-    # if punished, choose punishment, choose additional bondage category gear,
-    # and don't consider abdl accessories
-
-    print_choices('Accessories:', choose_many(inventory.select_class('accessories')))
-
-
-    # XXX
-    bound = False
-    if punished is None:
-        bound = choosePunishment()
-    if punished is True:
-        bound = False
-        while not bound:
-            bound = choosePunishment()
-
-    # either be bound or just restricted
-    if bound is not False:
-        print()
-        print("You will be punished!")
-        printIfNotNone('You will be', bound)
-        chooseMany('Additional Accessories:', bound_accessories)
-        print("\nYou will be locked in this position for " + choose(bound_timespan))
-    else:
-        chooseMany('Restrictions:', restrictions)
-        if head_choice != 'muzzle':
-            chooseMany('Additional Accessories:', restricted_accessories)
-        print("\nYou will be locked in the cage for " + choose(normal_timespan))
+    for instruction in scenario['instructions']:
+        if 'choose_one' in instruction:
+            selection = instruction_filter(instruction['choose_one'], inventory)
+            describe_if_not_none(instruction['description'], choose_one(selection))
+        if 'choose_one_of' in instruction:
+            selection = instruction['choose_one_of']
+            describe_if_not_none(instruction['description'], choose_one(selection))
+        elif 'choose_many' in instruction:
+            selection = instruction_filter(instruction['choose_many'], inventory)
+            print_choices(instruction['description'], choose_many(selection))
+        elif len(instruction) == 1:
+            print(instruction['description'])
 
     print()
 
@@ -156,7 +176,7 @@ restricted_accessories = {
 bondage = {
     'bound with your arms and legs tied to sides of the cage': 6,
     'bound with your arms behind your back cuffed to the cage': 6,
-    'confined in a loose straightjacket': 6,
+    'confined in a loose straitjacket': 6,
 }
 
 # if not bound, maybe have various light bondage

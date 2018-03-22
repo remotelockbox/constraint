@@ -1,46 +1,46 @@
 inventory:
   - class: clothing
     name: nothing
-    choice_weight: 10
+    odds: 10
     description: "no clothing at all"
 
   - class: clothing
     name: diapers
-    choice_weight: 20
+    odds: 20
     description: "just diapers"
     categories: [abdl]
 
   - class: clothing
     name: shirt_and_diapers
-    choice_weight: 20
+    odds: 20
     description: "t-shirt and diapers"
     categories: [abdl]
 
   - class: clothing
     name: sleeper
-    choice_weight: 10
+    odds: 10
     description: "locked sleeper"
     categories: [abdl]
 
   - class: clothing
     name: sissy_clothes
-    choice_weight: 5
+    odds: 5
     description: "sissy clothes"
     categories: [sissy]
 
   - class: headwear
     name: none
-    choice_weight: 20
+    odds: 20
 
   - class: headwear
     name: collar
-    choice_weight: 50
+    odds: 50
     description: 'collar'
     categories: [pupplay]
 
   - class: headwear
     name: muzzle
-    choice_weight: 20
+    odds: 20
     description: 'muzzle'
     categories: [pupplay]
 
