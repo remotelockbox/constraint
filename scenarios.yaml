@@ -1,4 +1,8 @@
 scenarios:
+  # Scenario for being locked in the cage.
+  # There are two variations of this scenario.
+  # Longer periods of time  with little or no bondage
+  # or heavily bound # but for a shorter period of time.
   - name: caged
     odds: 65
     instructions:
