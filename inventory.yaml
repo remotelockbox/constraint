@@ -6,14 +6,20 @@ inventory:
 
   - class: clothing
     name: diapers
-    odds: 20
+    odds: 15
     description: "just diapers"
     categories: [abdl]
 
   - class: clothing
     name: shirt_and_diapers
-    odds: 20
+    odds: 10
     description: "t-shirt and diapers"
+    categories: [abdl]
+
+  - class: clothing
+    name: plastic_pants
+    odds: 10
+    description: "locked plastic pants"
     categories: [abdl]
 
   - class: clothing
@@ -42,7 +48,7 @@ inventory:
     name: muzzle
     odds: 20
     description: 'muzzle'
-    categories: [pupplay]
+    categories: [bondage, pupplay, gag]
 
   - class: accessories
     name: buttplug
@@ -65,9 +71,9 @@ inventory:
     name: "pup hood"
     description: "pup hood"
     odds: 30
-    categories: [bondage, gag]
+    categories: [bondage, pupplay]
 
-  - class: headwear
+  - class: accessories
     name: earplugs
     description: "earplugs"
     odds: 16
