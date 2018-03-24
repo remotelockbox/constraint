@@ -1,92 +1,92 @@
-inventory:
-  - class: clothing
-    name: nothing
-    odds: 10
-    description: "no clothing at all"
+- class: clothing
+  name: nothing
+  odds: 10
+  description: "no clothing at all"
 
-  - class: clothing
-    name: diapers
-    odds: 15
-    description: "just diapers"
-    categories: [abdl]
+- class: clothing
+  name: diapers
+  odds: 15
+  description: "just diapers"
+  categories: [abdl]
 
-  - class: clothing
-    name: shirt_and_diapers
-    odds: 10
-    description: "t-shirt and diapers"
-    categories: [abdl]
+- class: clothing
+  name: shirt_and_diapers
+  odds: 10
+  description: "t-shirt and diapers"
+  categories: [abdl]
 
-  - class: clothing
-    name: plastic_pants
-    odds: 10
-    description: "locked plastic pants"
-    categories: [abdl]
+- class: clothing
+  name: plastic_pants
+  odds: 10
+  description: "locked plastic pants"
+  categories: [abdl]
 
-  - class: clothing
-    name: sleeper
-    odds: 10
-    description: "locked sleeper"
-    categories: [abdl]
+- class: clothing
+  name: sleeper
+  odds: 10
+  description: "locked sleeper"
+  categories: [abdl]
 
-  - class: clothing
-    name: sissy_clothes
-    odds: 5
-    description: "sissy clothes"
-    categories: [sissy]
+- class: clothing
+  name: sissy_clothes
+  odds: 5
+  description: "sissy clothes"
+  categories: [sissy]
 
-  - class: headwear
-    name: none
-    odds: 20
+- class: headwear
+  name: none
+  odds: 20
 
-  - class: headwear
-    name: collar
-    odds: 50
-    description: 'collar'
-    categories: [pupplay]
+- class: headwear
+  name: collar
+  odds: 50
+  description: 'collar'
+  categories: [pupplay]
 
-  - class: headwear
-    name: muzzle
-    odds: 20
-    description: 'muzzle'
-    categories: [bondage, pupplay, gag]
+- class: headwear
+  name: muzzle
+  odds: 20
+  description: 'muzzle'
+  categories: [bondage, pupplay, gag]
 
-  - class: accessories
-    name: buttplug
-    odds: 25
-    description: "butt plug"
+- class: accessories
+  name: buttplug
+  odds: 25
+  description: "butt plug"
+  categories: [butt]
 
-  - class: accessories
-    name: plushie
-    odds: 10
-    description: "plushie"
-    categories: [abdl]
+- class: accessories
+  name: plushie
+  odds: 10
+  description: "plushie"
+  categories: [abdl]
 
-  - class: accessories
-    name: blankie
-    odds: 10
-    description: "blankie"
-    categories: [abdl]
+- class: accessories
+  name: blankie
+  odds: 10
+  description: "blankie"
+  categories: [abdl]
 
-  - class: headwear
-    name: "pup hood"
-    description: "pup hood"
-    odds: 30
-    categories: [bondage, pupplay]
+- class: headwear
+  name: "pup hood"
+  description: "pup hood"
+  odds: 30
+  categories: [bondage, pupplay]
 
-  - class: accessories
-    name: earplugs
-    description: "earplugs"
-    odds: 16
-    categories: [bondage]
+- class: accessories
+  name: earplugs
+  description: "earplugs"
+  odds: 16
+  categories: [bondage]
 
-  - class: headwear
-    name: blindfold
-    description: "blindfold"
-    odds: 16
-    categories: [bondage, blind]
+- class: headwear
+  name: blindfold
+  description: "blindfold"
+  odds: 16
+  categories: [bondage, blind]
 
-  - class: headwear
-    name: hood
-    description: "timeout hood"
-    odds: 20
-    categories: [bondage, blind]
+- class: headwear
+  name: hood
+  description: "timeout hood"
+  odds: 20
+  categories: [bondage, blind]

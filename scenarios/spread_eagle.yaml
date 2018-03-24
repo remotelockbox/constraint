@@ -1,0 +1,27 @@
+# Tied to the 4 corners of a bed using an under-bed restraint system or ropes.
+- name: spread_eagle
+  odds: 50
+  instructions:
+    - description: "Put on"
+      choose_one:
+        class: clothing
+    - description: "Lock on a"
+      choose_one:
+        class: headwear
+    - description: "Accessories:"
+      choose_many:
+        class: accessories
+        not_category: abdl
+    - description: "Tie yourself spread-eagle on the bed and set your release timer for"
+      choose_one_of:
+        - description: "10 minutes."
+          odds: 10
+        - description: "15 minutes"
+          odds: 10
+        - description: "20 minutes"
+          odds: 10
+        - description: "25 minutes"
+          odds: 10
+        - description: "30 minutes"
+          odds: 10
+

@@ -1,4 +1,5 @@
 import random
+from glob import glob
 
 import yaml
 
@@ -81,29 +82,28 @@ class Inventory:
         return choose_many(self)
 
 
-def load(path, root):
+def load(path):
     with open(path) as f:
-        return yaml.safe_load(f)[root]
+        return yaml.safe_load(f)
 
 
-def run(seed=None, scenario_name=None):
-    inventory = Inventory(load('inventory.yaml', 'inventory'))
-    scenarios = load('scenarios.yaml', 'scenarios')
+def run(seed=None, scenario_name='*'):
+    inventory = Inventory(load('inventory.yaml'))
+
+    files = glob('scenarios/{}.yaml'.format(scenario_name))
+
+    if len(files) == 0:
+        print("Could not find files matching name: ".format(scenario_name))
+        return
+
+    scenarios = []
+    for file in files:
+        scenarios += load(file)
 
     if seed is not None:
         random.seed(seed)
 
-    if scenario_name is None:
-        scenario = choose_one(scenarios)
-    else:
-        candidates = [s for s in scenarios if s['name'] == scenario_name]
-        if len(candidates) == 0:
-            print("Could not find scenario named '{}'".format(scenario_name))
-            return
-        if len(candidates) > 1:
-            print("Found multiple scenarios named '{}'".format(scenario_name))
-            return
-        scenario = candidates[0]
+    scenario = choose_one(scenarios)
 
     print("Instructions:\n")
 
