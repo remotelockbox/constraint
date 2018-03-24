@@ -49,11 +49,17 @@
   description: 'muzzle'
   categories: [bondage, pupplay, gag]
 
-- class: accessories
+- class: buttplug
   name: buttplug
-  odds: 25
+  odds: 15
   description: "butt plug"
   categories: [butt]
+
+- class: buttplug
+  name: buttplug
+  odds: 15
+  description: "vibrating butt plug"
+  categories: [butt, vibration]
 
 - class: accessories
   name: plushie

@@ -2,16 +2,20 @@
 - name: spread_eagle
   odds: 50
   instructions:
+    - description: "Insert a"
+      maybe_choose_one:
+        odds: 25
+        class: buttplug
     - description: "Put on"
       choose_one:
         class: clothing
-    - description: "Lock on a"
-      choose_one:
-        class: headwear
     - description: "Accessories:"
       choose_many:
         class: accessories
         not_category: abdl
+    - description: "Lock on a"
+      choose_one:
+        class: headwear
     - description: "Tie yourself spread-eagle on the bed and set your release timer for"
       choose_one_of:
         - description: "10 minutes."

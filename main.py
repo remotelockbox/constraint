@@ -8,6 +8,7 @@ def roll(sides):
     return random.randint(1, sides)
 
 
+# Randomly choose one item from a list weighed by their odds
 def choose_one(choices):
     total_weight = sum([x['odds'] for x in choices])
 
@@ -22,10 +23,21 @@ def choose_one(choices):
     print("could not find choice with total odds {}, roll {}".format(total_weight, result))
 
 
-def choose_many(choices):
+# Roll 0-100 for each choice and return the first one that matches
+def maybe_choose_one(choices, odds_adjustment=1.0):
+    shuffled = list(choices)
+    random.shuffle(shuffled)
+
+    for choice in shuffled:
+        if roll(100) <= choice['odds'] * odds_adjustment:
+            return choice
+
+
+# Return all choices that passed a 0-100 roll under its odds
+def choose_many(choices, odds_adjustment=1.0):
     chosen = []
     for choice in choices:
-        if roll(100) <= choice['odds']:
+        if roll(100) <= choice['odds'] * odds_adjustment:
             chosen.append(choice)
     return chosen
 
@@ -78,8 +90,11 @@ class Inventory:
     def choose_one(self):
         return choose_one(self)
 
-    def choose_many(self):
-        return choose_many(self)
+    def maybe_choose_one(self, odds=1.0):
+        return maybe_choose_one(self, odds)
+
+    def choose_many(self, odds=1.0):
+        return choose_many(self, odds)
 
 
 def load(path):
@@ -87,7 +102,7 @@ def load(path):
         return yaml.safe_load(f)
 
 
-def run(seed=None, scenario_name='*'):
+def run(scenario_name='*', seed=None):
     inventory = Inventory(load('inventory.yaml'))
 
     files = glob('scenarios/{}.yaml'.format(scenario_name))
@@ -108,18 +123,29 @@ def run(seed=None, scenario_name='*'):
     print("Instructions:\n")
 
     for instruction in scenario['instructions']:
+        # An instruction can alter the odds of a selection from choose_many.
+        # Less than 100 will reduce the number of chosen items while
+        # greater than 100 will increase the number of items chosen.
+        adjust_odds = instruction.get('odds', 100) / 100.0
+
         if 'choose_one' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_one'])
             describe_if_not_none(instruction['description'], selection.choose_one())
         if 'choose_one_of' in instruction:
             selection = Inventory(instruction['choose_one_of'])
             describe_if_not_none(instruction['description'], selection.choose_one())
+        elif 'maybe_choose_one' in instruction:
+            selection = inventory.select_by_instruction(instruction['maybe_choose_one'])
+            describe_if_not_none(instruction['description'], selection.maybe_choose_one(adjust_odds))
+        elif 'maybe_choose_one_of' in instruction:
+            selection = Inventory(instruction['maybe_choose_one_of'])
+            describe_if_not_none(instruction['description'], selection.maybe_choose_one(adjust_odds))
         elif 'choose_many' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_many'])
-            print_choices(instruction['description'], choose_many(selection))
+            print_choices(instruction['description'], selection.choose_many(adjust_odds))
         elif 'choose_many_of' in instruction:
             selection = Inventory(instruction['choose_many_of'])
-            print_choices(instruction['description'], selection.choose_many())
+            print_choices(instruction['description'], selection.choose_many(adjust_odds))
         elif len(instruction) == 1:
             print(instruction['description'])
 
