@@ -3,8 +3,8 @@
   odds: 50
   instructions:
     - description: "Insert a"
-      maybe_choose_one:
-        odds: 25
+      odds: 20
+      choose_one:
         class: buttplug
     - description: "Put on"
       choose_one:

@@ -23,14 +23,11 @@ def choose_one(choices):
     print("could not find choice with total odds {}, roll {}".format(total_weight, result))
 
 
-# Roll 0-100 for each choice and return the first one that matches
-def maybe_choose_one(choices, odds_adjustment=1.0):
-    shuffled = list(choices)
-    random.shuffle(shuffled)
-
-    for choice in shuffled:
-        if roll(100) <= choice['odds'] * odds_adjustment:
-            return choice
+# Choose one weighted item or None depending on the odds (0-1.0)
+def maybe_choose_one(choices, odds: float):
+    if random.random() < odds:
+        return choose_one(choices)
+    return None
 
 
 # Return all choices that passed a 0-100 roll under its odds
@@ -87,10 +84,7 @@ class Inventory:
                     selection = selection.select_not_category(c)
         return selection
 
-    def choose_one(self):
-        return choose_one(self)
-
-    def maybe_choose_one(self, odds=1.0):
+    def choose_one(self, odds=1.0):
         return maybe_choose_one(self, odds)
 
     def choose_many(self, odds=1.0):
@@ -130,16 +124,10 @@ def run(scenario_name='*', seed=None):
 
         if 'choose_one' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_one'])
-            describe_if_not_none(instruction['description'], selection.choose_one())
+            describe_if_not_none(instruction['description'], selection.choose_one(adjust_odds))
         if 'choose_one_of' in instruction:
             selection = Inventory(instruction['choose_one_of'])
-            describe_if_not_none(instruction['description'], selection.choose_one())
-        elif 'maybe_choose_one' in instruction:
-            selection = inventory.select_by_instruction(instruction['maybe_choose_one'])
-            describe_if_not_none(instruction['description'], selection.maybe_choose_one(adjust_odds))
-        elif 'maybe_choose_one_of' in instruction:
-            selection = Inventory(instruction['maybe_choose_one_of'])
-            describe_if_not_none(instruction['description'], selection.maybe_choose_one(adjust_odds))
+            describe_if_not_none(instruction['description'], selection.choose_one(adjust_odds))
         elif 'choose_many' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_many'])
             print_choices(instruction['description'], selection.choose_many(adjust_odds))
