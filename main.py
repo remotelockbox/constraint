@@ -3,30 +3,8 @@ import random
 import yaml
 
 
-def roll(sides=6):
+def roll(sides):
     return random.randint(1, sides)
-
-
-def choose_many(choices):
-    chosen = []
-    for choice in choices:
-        if roll(100) <= choice['odds']:
-            chosen.append(choice)
-    return chosen
-
-
-def print_choices(heading, chosen):
-    if len(chosen) > 0:
-        print()
-        print(heading)
-    for choice in chosen:
-        print('  ' + choice['description'])
-    print()
-
-
-def describe_if_not_none(prefix, choice):
-    if choice is not None and ('name' not in choice or choice['name'] != 'none'):
-        print(prefix + ' ' + choice['description'])
 
 
 def choose_one(choices):
@@ -43,45 +21,64 @@ def choose_one(choices):
     print("could not find choice with total odds {}, roll {}".format(total_weight, result))
 
 
-def instruction_filter(step, inventory, selection=None):
-    if selection is None:
-        selection = inventory.data
+def choose_many(choices):
+    chosen = []
+    for choice in choices:
+        if roll(100) <= choice['odds']:
+            chosen.append(choice)
+    return chosen
 
-    if 'class' in step:
-        selection = inventory.select_class(step['class'], selection)
-    if 'category' in step:
-        selection = inventory.select_category(step['category'], selection)
-    if 'not_category' in step:
-        condition = step['not_category']
-        if isinstance(condition, str):
-            selection = inventory.select_not_category(step['not_category'], selection)
-        else:
-            for c in condition:
-                selection = inventory.select_not_category(c, selection)
-    return selection
+
+def print_choices(heading, selection):
+    if len(selection) > 0:
+        print()
+        print(heading)
+    for choice in selection:
+        print('  ' + choice['description'])
+    print()
+
+
+def describe_if_not_none(prefix, choice):
+    if choice is not None and ('name' not in choice or choice['name'] != 'none'):
+        print(prefix + ' ' + choice['description'])
 
 
 class Inventory:
     def __init__(self, data):
         self.data = data
 
-    def select_class(self, classname, data=None):
-        if data is None:
-            data = self.data
-        return [x for x in data if x['class'] == classname]
+    def __iter__(self):
+        return self.data.__iter__()
 
-    def select_category(self, category, data=None):
-        if data is None:
-            data = self.data
-        return [x for x in data if 'categories' in x and category in x['categories']]
+    def select_class(self, classname):
+        return Inventory([x for x in self.data if x['class'] == classname])
 
-    def select_not_category(self, category, data=None):
-        if data is None:
-            data = self.data
-        return [x for x in data if 'categories' not in x or category not in x['categories']]
+    def select_category(self, category):
+        return Inventory([x for x in self.data if 'categories' in x and category in x['categories']])
 
-    def choose_class(self, classname):
-        return choose_one(self.select_class(classname))
+    def select_not_category(self, category):
+        return Inventory([x for x in self.data if 'categories' not in x or category not in x['categories']])
+
+    def select_by_instruction(self, step):
+        selection = self
+        if 'class' in step:
+            selection = selection.select_class(step['class'])
+        if 'category' in step:
+            selection = selection.select_category(step['category'])
+        if 'not_category' in step:
+            condition = step['not_category']
+            if isinstance(condition, str):
+                selection = selection.select_not_category(step['not_category'])
+            else:
+                for c in condition:
+                    selection = selection.select_not_category(c)
+        return selection
+
+    def choose_one(self):
+        return choose_one(self)
+
+    def choose_many(self):
+        return choose_many(self)
 
 
 def load(path, root):
@@ -112,17 +109,17 @@ def run(seed=None, scenario_name=None):
 
     for instruction in scenario['instructions']:
         if 'choose_one' in instruction:
-            selection = instruction_filter(instruction['choose_one'], inventory)
-            describe_if_not_none(instruction['description'], choose_one(selection))
+            selection = inventory.select_by_instruction(instruction['choose_one'])
+            describe_if_not_none(instruction['description'], selection.choose_one())
         if 'choose_one_of' in instruction:
-            selection = instruction['choose_one_of']
-            describe_if_not_none(instruction['description'], choose_one(selection))
+            selection = Inventory(instruction['choose_one_of'])
+            describe_if_not_none(instruction['description'], selection.choose_one())
         elif 'choose_many' in instruction:
-            selection = instruction_filter(instruction['choose_many'], inventory)
+            selection = inventory.select_by_instruction(instruction['choose_many'])
             print_choices(instruction['description'], choose_many(selection))
         elif 'choose_many_of' in instruction:
-            selection = instruction['choose_many_of']
-            print_choices(instruction['description'], choose_many(selection))
+            selection = Inventory(instruction['choose_many_of'])
+            print_choices(instruction['description'], selection.choose_many())
         elif len(instruction) == 1:
             print(instruction['description'])
 
