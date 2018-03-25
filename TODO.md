@@ -9,8 +9,15 @@ An issue tracker may supersede this file in the future.
 
 ## Features
 
-- debug logging with logger module
+- documentation for file formats
+- validation
+- trace logging with logger module
 
 ## Proposed Ideas
 
-- none
+- allow scenarios to run other scenario
+    - references to scenario fragments
+    - support tagging, odds, and embedding of scenarios
+- offer interactive choices to the user
+- A UI for selecting scenarios and managing inventory
+- loading scenarios by URL for easy sharing
