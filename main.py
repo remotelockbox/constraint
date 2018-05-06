@@ -4,6 +4,23 @@ from glob import glob
 import yaml
 
 
+class Output:
+    def __init__(self):
+        self._written = False
+
+    def println(self, msg):
+        self._written = True
+        print(msg)
+        
+    def start_paragraph(self):
+        if self._written:
+            print()
+        self._written = False
+
+
+out = Output()
+
+
 def roll(sides):
     return random.randint(1, sides)
 
@@ -20,7 +37,7 @@ def choose_one(choices):
         if acc is not None and acc >= result:
             return choice
 
-    print("could not find choice with total odds {}, roll {}".format(total_weight, result))
+    out.println("could not find choice with total odds {}, roll {}".format(total_weight, result))
 
 
 # Choose one weighted item or None depending on the odds (0-1.0)
@@ -41,16 +58,17 @@ def choose_many(choices, odds_adjustment=1.0):
 
 def print_choices(heading, selection):
     if len(selection) > 0:
-        print()
-        print(heading)
+        out.start_paragraph()
+        out.println(heading)
+
     for choice in selection:
-        print('  ' + choice['description'])
-    print()
+        out.println('  - ' + choice['description'])
 
 
 def describe_if_not_none(prefix, choice):
     if choice is not None and ('name' not in choice or choice['name'] != 'none'):
-        print(prefix + ' ' + choice['description'])
+        out.start_paragraph()
+        out.println(' - ' + prefix + ' ' + choice['description'])
 
 
 class Inventory:
@@ -102,7 +120,7 @@ def run(scenario_name='*', seed=None):
     files = glob('scenarios/{}.yaml'.format(scenario_name))
 
     if len(files) == 0:
-        print("Could not find files matching name: ".format(scenario_name))
+        out.println("Could not find files matching name: ".format(scenario_name))
         return
 
     scenarios = []
@@ -114,7 +132,7 @@ def run(scenario_name='*', seed=None):
 
     scenario = choose_one(scenarios)
 
-    print("Instructions:\n")
+    out.println("Instructions:")
 
     for instruction in scenario['instructions']:
         # An instruction can alter the odds of a selection from choose_many.
@@ -135,9 +153,8 @@ def run(scenario_name='*', seed=None):
             selection = Inventory(instruction['choose_many_of'])
             print_choices(instruction['description'], selection.choose_many(adjust_odds))
         elif len(instruction) == 1:
-            print(instruction['description'])
-
-    print()
+            out.start_paragraph()
+            out.println(instruction['description'])
 
 
 if __name__ == '__main__':
