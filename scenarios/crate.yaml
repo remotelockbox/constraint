@@ -54,6 +54,11 @@
           odds: 10
         - description: "bound with your arms behind your back cuffed to the cage"
           odds: 10
+        - description: "bound with your legs and wrists locked to the ends of a
+            length-wise chain across the bottom of the cage and your collar
+            locked with 18\" of chain to the front. If you can, strap your
+            thighs to the chain running between your legs."
+          odds: 10
         - description: "confined in a loose straitjacket"
           odds: 10
     - description: "Accessories:"

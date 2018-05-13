@@ -1,4 +1,5 @@
 import random
+import textwrap
 from glob import glob
 
 import yaml
@@ -10,12 +11,26 @@ class Output:
 
     def println(self, msg):
         self._written = True
-        print(msg)
+
+        unwrapped_lines = msg.splitlines()
+        for unwrapped in unwrapped_lines:
+            for line in textwrap.wrap(str(unwrapped), 68, subsequent_indent=self.__count_indent(unwrapped)):
+                print(line)
         
     def start_paragraph(self):
         if self._written:
             print()
         self._written = False
+
+    @staticmethod
+    def __count_indent(msg):
+        indent = ''
+        for c in msg:
+            if c in [' ', '-']:
+                indent += ' '
+            else:
+                break
+        return indent
 
 
 out = Output()
