@@ -150,6 +150,8 @@ def run(scenario_name='*', seed=None):
     out.println("Instructions:")
 
     for instruction in scenario['instructions']:
+        description = instruction.get('description')
+
         # An instruction can alter the odds of a selection from choose_many.
         # Less than 100 will reduce the number of chosen items while
         # greater than 100 will increase the number of items chosen.
@@ -157,19 +159,19 @@ def run(scenario_name='*', seed=None):
 
         if 'choose_one' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_one'])
-            describe_if_not_none(instruction['description'], selection.choose_one(adjust_odds))
+            describe_if_not_none(description, selection.choose_one(adjust_odds))
         if 'choose_one_of' in instruction:
             selection = Inventory(instruction['choose_one_of'])
-            describe_if_not_none(instruction['description'], selection.choose_one(adjust_odds))
+            describe_if_not_none(description, selection.choose_one(adjust_odds))
         elif 'choose_many' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_many'])
-            print_choices(instruction['description'], selection.choose_many(adjust_odds))
+            print_choices(description, selection.choose_many(adjust_odds))
         elif 'choose_many_of' in instruction:
             selection = Inventory(instruction['choose_many_of'])
-            print_choices(instruction['description'], selection.choose_many(adjust_odds))
+            print_choices(description, selection.choose_many(adjust_odds))
         elif len(instruction) == 1:
             out.start_paragraph()
-            out.println(instruction['description'])
+            out.println(description)
 
 
 if __name__ == '__main__':

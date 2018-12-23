@@ -21,3 +21,10 @@ An issue tracker may supersede this file in the future.
 - offer interactive choices to the user
 - A UI for selecting scenarios and managing inventory
 - loading scenarios by URL for easy sharing
+- be able to set variables and substitute them in to descriptions
+  and odds values. This would allow more dynamic scenes where selecting
+  one choice may make another choice more or less likely. Choices could
+  also influence the language used in later descriptions.
+  - also, branching based on variable comparisons.
+  - combined with interactive choices, this makes
+    choose-your-own-adventure scenes possible.
