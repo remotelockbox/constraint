@@ -1,0 +1,39 @@
+# Tied to the bed using a segufix-like restraint system.
+- name: segufix
+  odds: 50
+  instructions:
+    - description: "Insert a"
+      odds: 20
+      choose_one:
+        class: buttplug
+    - description: "Put on"
+      choose_one:
+        class: clothing
+    - description: "Accessories:"
+      choose_many:
+        class: accessories
+        not_category: abdl
+    - description: "Strap yourself to the bed using segufix restraints"
+    - description: "Set your release timer for"
+      choose_one_of:
+        - description: "10 minutes."
+          odds: 10
+        - description: "15 minutes"
+          odds: 10
+        - description: "20 minutes"
+          odds: 10
+        - description: "25 minutes"
+          odds: 10
+        - description: "30 minutes"
+          odds: 10
+    - description: "Lock on a"
+      choose_one:
+        class: headwear
+    - description: "lock your wrists"
+      choose_one_of:
+        - description: "at your side"
+          odds: 50
+        - description: "onto your chest straps"
+          odds: 20
+        - description: "at shoulder height"
+          odds: 5
