@@ -117,6 +117,34 @@ class Inventory:
                     selection = selection.select_not_category(c)
         return selection
 
+    def choose_many_including_required(self, required_substrings, odds=1.0):
+        choices = []
+        shuffled_data = list(self.data)
+        random.shuffle(shuffled_data)
+
+        for substring in required_substrings:
+            for x in shuffled_data:
+                if 'description' in x and substring in x['description']:
+                    choices.append(x)
+                    break
+
+        more = self.choose_many(odds)
+        for choice in more:
+            if choice not in choices:
+                choices.append(choice)
+        return choices
+
+    def choose_one_or_required(self, required_substrings, odds=1.0):
+        """ if a choice matches a requirement, choose it. Otherwise choose at random according to odds. """
+        shuffled_data = list(self.data)
+        random.shuffle(shuffled_data)
+
+        for substring in required_substrings:
+            for x in shuffled_data:
+                if 'description' in x and substring in x['description']:
+                    return x
+        return self.choose_one(odds)
+
     def choose_one(self, odds=1.0):
         return maybe_choose_one(self, odds)
 
@@ -129,7 +157,22 @@ def load(path):
         return yaml.safe_load(f)
 
 
-def run(scenario_name='*', seed=None):
+def run(scenario_name='*', desired_inventory=None, seed=None):
+    """ Build and print out a scenario.
+
+    Args:
+        scenario_name (str, optional): If specified, choose a scenario that matches the given glob pattern.
+             Wildcards are supported. For example, "bed_*" would match all scenario files that start with "bed_".
+        desired_inventory (:obj:`list` of :obj:`str`, optional): A list of inventory items that should be chosen
+            if the scenario allows. If you plan to wear/use something specific, add it to this list.
+            This matches substrings so "cuff" would match "leather cuffs" or "handcuffs". In case of multiple
+            matches, one will be chosen at random.
+        seed (int): Pre-seed the random number generator so every run produces the same results.
+    """
+
+    if desired_inventory is None:
+        desired_inventory = []
+
     inventory = Inventory(load('inventory.yaml'))
 
     files = glob('scenarios/{}.yaml'.format(scenario_name))
@@ -159,20 +202,20 @@ def run(scenario_name='*', seed=None):
 
         if 'choose_one' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_one'])
-            describe_if_not_none(description, selection.choose_one(adjust_odds))
+            describe_if_not_none(description, selection.choose_one_or_required(desired_inventory, adjust_odds))
         if 'choose_one_of' in instruction:
             selection = Inventory(instruction['choose_one_of'])
-            describe_if_not_none(description, selection.choose_one(adjust_odds))
+            describe_if_not_none(description, selection.choose_one_or_required(desired_inventory, adjust_odds))
         elif 'choose_many' in instruction:
             selection = inventory.select_by_instruction(instruction['choose_many'])
-            print_choices(description, selection.choose_many(adjust_odds))
+            print_choices(description, selection.choose_many_including_required(desired_inventory, adjust_odds))
         elif 'choose_many_of' in instruction:
             selection = Inventory(instruction['choose_many_of'])
-            print_choices(description, selection.choose_many(adjust_odds))
+            print_choices(description, selection.choose_many_including_required(desired_inventory, adjust_odds))
         elif len(instruction) == 1:
             out.start_paragraph()
             out.println(description)
 
 
 if __name__ == '__main__':
-    run()
+    run(desired_inventory=[])
