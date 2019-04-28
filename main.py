@@ -1,4 +1,5 @@
 import random
+import shutil
 import textwrap
 from glob import glob
 
@@ -7,20 +8,23 @@ import yaml
 
 class Output:
     def __init__(self):
-        self._written = False
+        self._para_written = False
+        self.width = min(72, shutil.get_terminal_size()[0])
 
     def println(self, msg):
-        self._written = True
+        self._para_written = True
 
         unwrapped_lines = msg.splitlines()
         for unwrapped in unwrapped_lines:
-            for line in textwrap.wrap(str(unwrapped), 68, subsequent_indent=self.__count_indent(unwrapped)):
+            for line in textwrap.wrap(str(unwrapped),
+                                      self.width,
+                                      subsequent_indent=self.__count_indent(unwrapped)):
                 print(line)
         
     def start_paragraph(self):
-        if self._written:
+        if self._para_written:
             print()
-        self._written = False
+        self._para_written = False
 
     @staticmethod
     def __count_indent(msg):
