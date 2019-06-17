@@ -1,6 +1,6 @@
 # Scenario for being locked in the crate.
 # There are two variations of this scenario.
-# Longer periods of time  with little or no bondage
+# Longer periods of time with little or no bondage
 # or heavily bound but for a shorter period of time.
 - name: crate
   odds: 65
@@ -70,10 +70,10 @@
         - description: "10 minutes. You must roll again after your punishment is complete."
           odds: 10
         - description: "15 minutes"
-          odds: 10
+          odds: 15
         - description: "20 minutes"
-          odds: 10
+          odds: 15
         - description: "25 minutes"
           odds: 10
         - description: "30 minutes"
-          odds: 10
+          odds: 5
