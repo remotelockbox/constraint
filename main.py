@@ -1,3 +1,4 @@
+import os.path
 import random
 import shutil
 import textwrap
@@ -161,29 +162,39 @@ def load(path):
         return yaml.safe_load(f)
 
 
-def run(scenario_name='*', desired_inventory=None, seed=None):
+def run(scenario_names=['*'], desired_inventory=None,
+        inventory_file='inventory.yaml', scenario_path='scenarios/', seed=None):
     """ Build and print out a scenario.
 
     Args:
-        scenario_name (str, optional): If specified, choose a scenario that matches the given glob pattern.
-             Wildcards are supported. For example, "bed_*" would match all scenario files that start with "bed_".
+        scenario_names (:obj:`list` of :obj:`str`, optional): If specified,
+            choose scenarios that matches the given glob patterns.
+            Wildcards are supported. For example, "bed_*" would match all scenario files that start with "bed_".
         desired_inventory (:obj:`list` of :obj:`str`, optional): A list of inventory items that should be chosen
             if the scenario allows. If you plan to wear/use something specific, add it to this list.
             This matches substrings so "cuff" would match "leather cuffs" or "handcuffs". In case of multiple
             matches, one will be chosen at random.
+        inventory_file (str): The yaml file to read the inventory from.
+        scenario_path (str): search path for scenario files.
         seed (int): Pre-seed the random number generator so every run produces the same results.
     """
 
     if desired_inventory is None:
         desired_inventory = []
 
-    inventory = Inventory(load('inventory.yaml'))
+    inventory = Inventory(load(inventory_file))
 
-    files = glob('scenarios/{}.yaml'.format(scenario_name))
+    files = []
+    for name in scenario_names:
+        files += glob(os.path.join(scenario_path, '{}.yaml'.format(name)))
 
-    if len(files) == 0:
-        out.println("Could not find files matching name: ".format(scenario_name))
+
+    if not files:
+        out.println("Could not find matching scenario files")
         return
+    if scenario_names != ['*']:
+        out.println("Matching scenarios:\n  " + ', '.join([os.path.basename(f) for f in files]))
+        out.start_paragraph()
 
     scenarios = []
     for file in files:
@@ -223,4 +234,20 @@ def run(scenario_name='*', desired_inventory=None, seed=None):
 
 
 if __name__ == '__main__':
-    run(desired_inventory=[])
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Generate a scenario')
+    parser.add_argument('--desired-items', nargs='+', metavar='ITEM',
+                        help='items that you want the scenario to use if it is able to')
+    parser.add_argument('--inventory-file', metavar='FILE',
+                        help='path to the inventory file', default='inventory.yaml')
+    parser.add_argument('--scenario-path', metavar='PATH',
+                        help='the directory to read scenario files from', default='scenarios')
+    parser.add_argument('scenarios', nargs='*', default=['*'],
+                        help='choose scenarios by name. Wildcards (*) are supported.')
+
+    args = parser.parse_args()
+    run(scenario_names=args.scenarios,
+            desired_inventory=args.desired_items,
+            inventory_file=args.inventory_file,
+            scenario_path=args.scenario_path)
