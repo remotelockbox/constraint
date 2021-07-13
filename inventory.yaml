@@ -11,21 +11,33 @@
 
 - class: clothing
   name: shirt_and_diapers
-  odds: 10
+  odds: 15
   description: "t-shirt and diapers"
   categories: [abdl]
 
 - class: clothing
   name: plastic_pants
   odds: 10
-  description: "locked plastic pants"
-  categories: [abdl]
+  description: "locking plastic pants"
+  categories: [abdl, locking]
 
 - class: clothing
   name: sleeper
+  odds: 15
+  description: "locking sleeper"
+  categories: [abdl, locking]
+
+- class: clothing
+  name: onesie
   odds: 10
-  description: "locked sleeper"
+  description: "onesie over a diaper"
   categories: [abdl]
+
+- class: clothing
+  name: bodysuit
+  odds: 10
+  description: "locking romper over a diaper"
+  categories: [abdl, locking]
 
 - class: clothing
   name: sissy_clothes
@@ -41,13 +53,19 @@
   name: collar
   odds: 50
   description: 'collar'
-  categories: [pupplay]
+  categories: [pupplay, locking]
+
+- class: headwear
+  name: ballgag
+  odds: 15
+  description: 'ballgag'
+  categories: [bondage, gag]
 
 - class: headwear
   name: muzzle
   odds: 20
   description: 'muzzle'
-  categories: [bondage, pupplay, gag]
+  categories: [bondage, pupplay, gag, locking]
 
 - class: buttplug
   name: buttplug
@@ -85,6 +103,12 @@
   odds: 16
   categories: [bondage]
 
+- class: accessories
+  name: chastity
+  description: "chastity cage"
+  odds: 15
+  categories: [chastity, sissy]
+
 - class: headwear
   name: blindfold
   description: "blindfold"
@@ -95,4 +119,4 @@
   name: hood
   description: "timeout hood"
   odds: 20
-  categories: [bondage, blind]
+  categories: [bondage, blind, locking]
