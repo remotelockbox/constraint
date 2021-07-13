@@ -6,14 +6,15 @@
       odds: 20
       choose_one:
         class: buttplug
-    - description: "Put on"
-      choose_one:
-        class: clothing
-    - description: "Accessories:"
+    - description: "With these Accessories:"
+      odds: 150
       choose_many:
         class: accessories
         not_category: abdl
-    - description: "Lock on a"
+    - description: "Put on"
+      choose_one:
+        class: clothing
+    - description: "Put on a"
       choose_one:
         class: headwear
     - description: "Tie yourself spread-eagle on the bed and set your release timer for"

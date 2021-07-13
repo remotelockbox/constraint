@@ -41,6 +41,11 @@
   odds: 35
   instructions:
     - description: "You will be punished!"
+    - description: "Put on a"
+      odds: 20
+      choose_one:
+        class: accessories
+        category: chastity
     - description: "Put on"
       choose_one:
         class: clothing
@@ -64,7 +69,7 @@
     - description: "Accessories:"
       choose_many:
         class: accessories
-        not_category: abdl
+        not_category: [abdl, chastity]
     - description: "You will be locked in the cage for"
       choose_one_of:
         - description: "10 minutes. You must roll again after your punishment is complete."

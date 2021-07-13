@@ -26,7 +26,7 @@
           odds: 10
         - description: "30 minutes"
           odds: 10
-    - description: "Lock on a"
+    - description: "Put on a"
       choose_one:
         class: headwear
     - description: "lock your wrists"
