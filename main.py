@@ -216,9 +216,10 @@ def run(scenario_name='*', desired_inventory=None, seed=None):
         elif 'choose_many_of' in instruction:
             selection = Inventory(instruction['choose_many_of'])
             print_choices(description, selection.choose_many_including_required(desired_inventory, adjust_odds))
-        elif len(instruction) == 1:
-            out.start_paragraph()
-            out.println(description)
+        elif instruction.keys() <= {'description', 'odds'}:
+            if 'odds' not in instruction or (random.random() < adjust_odds):
+                out.start_paragraph()
+                out.println(description)
 
 
 if __name__ == '__main__':
