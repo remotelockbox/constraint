@@ -6,6 +6,7 @@
       odds: 20
       choose_one:
         class: buttplug
+      set: plugged
     - description: "With these Accessories:"
       odds: 150
       choose_many:
@@ -19,7 +20,7 @@
         class: headwear
     - description: "Tie yourself spread-eagle on the bed and set your release timer for"
       choose_one_of:
-        - description: "10 minutes."
+        - description: "10 minutes{% if plugged %} but stay plugged for a half hour after{% endif %}."
           odds: 10
         - description: "15 minutes"
           odds: 10
