@@ -9,6 +9,7 @@
       choose_one:
         class: clothing
     - description: "Lock on a"
+      odds: 75
       choose_one:
         class: headwear
         not_category: blind
@@ -51,6 +52,7 @@
         class: clothing
     - description: "Lock on a"
       choose_one:
+        odds: 80
         class: headwear
         category: bondage
     - description: "You will be"

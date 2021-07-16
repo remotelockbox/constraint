@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remotelockbox/constraint/schema/scenario.schema.json",
+  "title": "scenario list",
+  "type": "array",
+  "items": {
+    "$id": "scenario",
+    "title": "scenario",
+    "type": "object",
+    "properties": {
+      "name": {"type":  "string"},
+      "odds": {"type":  "integer"},
+      "instructions": {
+        "type": "array",
+        "items": {
+          "$id": "instruction",
+          "name": "instruction",
+          "description": "A single instruction to the player",
+          "type": "object",
+          "properties": {
+            "description": {"type": "string"},
+            "odds": {
+              "type": "integer",
+              "description": "The percent chance that this this instruction will be executed. If 'odds' is omitted, the instruction will always execute."
+            },
+            "set": {
+              "description": "set a variable for use in a later instruction. This will be set if this instruction is executed (based on its odds).",
+              "anyOf": [
+                {"type": "string", "description":  "setting a variable without specifying a value sets it to the boolean value 'true'"},
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "value": {"description":  "The value can be of any type: A boolean, string, list, map, or number."}
+                  }
+                }
+              ]
+            },
+            "choose_many": {
+              "$ref": "#/definitions/inventory_selector",
+              "description": "choose any number of items from the inventory that match the criteria."
+            },
+            "choose_many_of": {
+              "$ref": "#/definitions/inline_inventory_list",
+              "description": "choose any number of the instructions listed under this entry"
+            },
+            "choose_one": {
+              "$ref": "#/definitions/inventory_selector",
+              "description": "choose one item from the inventory that matches the criteria. If no suitable match is found, this instruction is skipped."
+            },
+            "choose_one_of": {
+              "$ref": "#/definitions/inline_inventory_list",
+              "description": "choose one of the instructions listed under this entry to execute"
+            }
+          },
+          "required": ["description"],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [ "name", "odds", "instructions"]
+  },
+  "minItems": 1,
+
+  "definitions": {
+    "inventory_selector": {
+      "type": "object",
+      "properties": {
+        "class": {"type":  "string"},
+        "category": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ]
+        },
+        "not_category": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ]
+        }
+      }
+    },
+    "inline_inventory_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The description that is displayed to the player"
+          },
+          "odds": {
+            "type": "integer",
+            "description": "The odds that this item will be chosen relative to the other items in this list."
+          }
+        },
+        "required": ["description", "odds"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

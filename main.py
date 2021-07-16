@@ -1,10 +1,13 @@
 import os.path
 import random
 import shutil
+import sys
 import textwrap
 from collections.abc import Iterator, Iterable
 from glob import glob
 
+import jsonschema
+import jsonref
 import yaml
 from jinja2 import Template
 
@@ -166,9 +169,45 @@ class Inventory:
         return choose_many(self, odds)
 
 
-def load(path):
-    with open(path) as f:
-        return yaml.safe_load(f)
+def load_inventory(path):
+    with open(path) as f, open("schema/inventory.schema.json") as schema_file:
+        schema = jsonref.load(schema_file)
+        contents = yaml.safe_load(f)
+        validator = jsonschema.Draft7Validator(schema)
+        errors = validator.iter_errors(contents)
+        tree = jsonschema.ErrorTree(errors)
+        if tree.total_errors > 0:
+            error: jsonschema.ValidationError = jsonschema.exceptions.best_match(
+                validator.iter_errors(contents))
+            out.println(f"error reading {f.name}: {error.message}")
+            if len(error.path) >= 1:
+                out.println(
+                    f'The error is located in item #{error.path[0]} of the inventory')
+            out.start_paragraph()
+            raise ValueError("error while parsing file")
+        return contents
+
+
+def load_scenario(path):
+    with open(path) as f, open("schema/scenario.schema.json") as schema_file:
+        schema = jsonref.load(schema_file)
+        contents = yaml.safe_load(f)
+
+        validator = jsonschema.Draft7Validator(schema)
+        errors = validator.iter_errors(contents)
+        tree = jsonschema.ErrorTree(errors)
+        if tree.total_errors > 0:
+            error: jsonschema.ValidationError = jsonschema.exceptions.best_match(
+                validator.iter_errors(contents))
+            out.println(f"error reading {f.name}: {error.message}")
+            if len(error.path) >= 3:
+                out.println(
+                    f'The error is located in the #{error.path[2]} '
+                    f'instruction of the "{contents[error.path[0]]["name"]}" scenario')
+            out.start_paragraph()
+            raise ValueError("error while parsing file")
+
+        return contents
 
 
 def interpolate(obj, env):
@@ -209,7 +248,11 @@ def run(scenario_names=None, desired_inventory=None,
     if desired_inventory is None:
         desired_inventory = []
 
-    inventory = Inventory(load(inventory_file))
+    try:
+        inventory = Inventory(load_inventory(inventory_file))
+    except ValueError:
+        print("cannot read inventory. aborting", file=sys.stderr)
+        return
 
     files = []
     for name in scenario_names:
@@ -226,18 +269,22 @@ def run(scenario_names=None, desired_inventory=None,
         out.start_paragraph()
 
     scenarios = []
-    for file in files:
-        scenarios += load(file)
+    try:
+        for file in files:
+            scenarios += load_scenario(file)
+    except ValueError:
+        print("cannot read a scenario file. aborting", file=sys.stderr)
+        return
 
     if seed is not None:
         random.seed(seed)
 
     scenario = choose_one(scenarios)
 
-    eval(desired_inventory, inventory, scenario)
+    eval_scenario(desired_inventory, inventory, scenario)
 
 
-def eval(desired_inventory, inventory, scenario):
+def eval_scenario(desired_inventory, inventory, scenario):
     out.println("Instructions:")
 
     env = {}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remotelockbox/constraint/schema/inventory.schema.json",
+  "title": "Inventory List",
+  "type": "array",
+  "items": {
+    "name": "item",
+    "description": "An item you have on hand that you would like to appear in generated scenarios.",
+    "type": "object",
+    "properties": {
+      "class": {
+        "type": "string",
+        "description": "The broad type of item, typically based on where on the body it is worn."
+      },
+      "name": {
+        "type": "string",
+        "description": "A short name for the item. This must be unique."
+      },
+      "description": {
+        "type": "string",
+        "description": "The description that is displayed to the player"
+      },
+      "odds": {
+        "type": "integer",
+        "description": "The odds that this item will be chosen relative to other items when a scenario is makes a choice among many items. The number is a 'weight', not a percentage. This is useful for emphasizing your favorite items or making your less favorite items appear less frequently."
+      },
+      "categories": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Tag items with the categories they belong in. Scenarios can choose items from categories or exclude categories. Read the scenarios to help figure out how best to tag your items."
+      }
+    },
+    "required": ["class", "name", "description", "odds"],
+    "additionalProperties": false
+  },
+  "minItems": 1
+}

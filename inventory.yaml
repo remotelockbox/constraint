@@ -46,10 +46,6 @@
   categories: [sissy]
 
 - class: headwear
-  name: none
-  odds: 20
-
-- class: headwear
   name: collar
   odds: 50
   description: 'collar'

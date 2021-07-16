@@ -9,3 +9,5 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - data-driven inventory and scenarios
 - Abstracted text output for display in a terminal or in a UI
 - Ability to run a scenario with desired inventory items.
+- Variables and template substitution using jinja2 syntax
+- Validation with json-schema

@@ -16,6 +16,7 @@
       choose_one:
         class: clothing
     - description: "Put on a"
+      odds: 75
       choose_one:
         class: headwear
     - description: "Tie yourself spread-eagle on the bed and set your release timer for"
