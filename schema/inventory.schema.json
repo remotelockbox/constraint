@@ -7,6 +7,8 @@
     "name": "item",
     "description": "An item you have on hand that you would like to appear in generated scenarios.",
     "type": "object",
+    "required": ["class", "name", "description", "odds"],
+    "additionalProperties": false,
     "properties": {
       "class": {
         "type": "string",
@@ -31,9 +33,7 @@
         },
         "description": "Tag items with the categories they belong in. Scenarios can choose items from categories or exclude categories. Read the scenarios to help figure out how best to tag your items."
       }
-    },
-    "required": ["class", "name", "description", "odds"],
-    "additionalProperties": false
+    }
   },
   "minItems": 1
 }
