@@ -5,9 +5,10 @@ import sys
 import textwrap
 from collections.abc import Iterator, Iterable
 from glob import glob
+from typing import Optional
 
-import jsonschema
 import jsonref
+import jsonschema
 import yaml
 from jinja2 import Template
 
@@ -29,8 +30,13 @@ class Output:
 
     def start_paragraph(self):
         if self._para_written:
-            print()
+            print('')
         self._para_written = False
+
+    def print_paragraph(self, msg):
+        self.start_paragraph()
+        if msg:
+            self.println(msg)
 
     @staticmethod
     def __count_indent(msg):
@@ -46,34 +52,37 @@ class Output:
 out = Output()
 
 
-def roll(sides: int):
+def roll(sides: int) -> int:
     return random.randint(1, sides)
 
 
 # Randomly choose one item from a list weighed by their odds
-def choose_one(choices: Iterable[dict]):
-    total_weight = sum([x['odds'] for x in choices])
+def choose_item(choices: Iterable[dict]) -> Optional[dict]:
+    if len(choices) <= 1:
+        return next(iter(choices), None)
+
+    total_weight = sum([x.get('odds', 1) for x in choices])
 
     result = roll(total_weight)
 
     acc = 0
     for choice in choices:
-        acc += choice['odds']
+        acc += choice.get('odds', 1)
         if acc is not None and acc >= result:
             return choice
 
-    out.println("could not find choice with total odds {}, roll {}".format(total_weight, result))
+    raise ValueError(f"could not find choice with total odds {total_weight}, roll {result}")
 
 
 # Choose one weighted item or None depending on the odds (0-1.0)
-def maybe_choose_one(choices: Iterable[dict], odds: float):
+def maybe_choose_item(choices: Iterable[dict], odds: float) -> Optional[dict]:
     if random.random() < odds:
-        return choose_one(choices)
+        return choose_item(choices)
     return None
 
 
 # Return all choices that passed a 0-100 roll under its odds
-def choose_many(choices: Iterable[dict], odds_adjustment=1.0):
+def choose_many_items(choices: Iterable[dict], odds_adjustment=1.0) -> list[dict]:
     chosen = []
     for choice in choices:
         if roll(100) <= choice['odds'] * odds_adjustment:
@@ -81,26 +90,44 @@ def choose_many(choices: Iterable[dict], odds_adjustment=1.0):
     return chosen
 
 
-def print_choices(heading: str, selection: list, env):
+def describe_choice(prefix: Optional[str], choice: dict):
+    if prefix:
+        out.print_paragraph(prefix + ' ' + choice['text'])
+    else:
+        out.print_paragraph(choice['text'])
+
+
+def describe_many(heading: Optional[str], selection: list[dict]):
+    if heading and len(selection) > 0:
+        out.print_paragraph(heading)
+
+    for entry in selection:
+        out.println('  - ' + entry['text'])
+
+
+def describe_item(prefix: str, item: Optional[dict]) -> bool:
+    if item is not None and ('name' not in item or item['name'] != 'none'):
+        out.print_paragraph(prefix + ' ' + item['description'])
+        return True
+    return False
+
+
+def describe_items(heading: str, selection: list[str]) -> bool:
     if len(selection) > 0:
-        out.start_paragraph()
-        out.println(heading)
+        out.print_paragraph(heading)
+    else:
+        return False
 
     for choice in selection:
-        out.println('  - ' + choice['description'])
-        if 'set' in choice.keys():
-            eval_set(env, choice['set'])
-
-
-def describe_if_not_none(prefix: str, choice: dict, env):
-    if choice is not None and ('name' not in choice or choice['name'] != 'none'):
-        out.start_paragraph()
-        out.println(' - ' + prefix + ' ' + choice['description'])
-        if 'set' in choice.keys():
-            eval_set(env, choice['set'])
+        out.println('  - ' + choice)
+    return True
 
 
 class Inventory:
+    """ Represents an inventory file and provides
+        methods for selecting items from the inventory
+    """
+
     def __init__(self, data: list[dict]):
         self.data: list[dict] = data
 
@@ -134,39 +161,39 @@ class Inventory:
                     selection = selection.select_not_category(c)
         return selection
 
-    def choose_many_including_required(self, required_substrings, odds=1.0):
+    def choose_many_items_including_required(self, required_substrings, odds=1.0) -> list[str]:
         choices = []
         shuffled_data = list(self.data)
         random.shuffle(shuffled_data)
 
         for substring in required_substrings:
             for x in shuffled_data:
-                if 'description' in x and substring in x['description']:
-                    choices.append(x)
+                if substring in x['description']:
+                    choices.append(x['description'])
                     break
 
-        more = self.choose_many(odds)
+        more = self.choose_many_items(odds)
         for choice in more:
-            if choice not in choices:
-                choices.append(choice)
+            if choice['description'] not in choices:
+                choices.append(choice['description'])
         return choices
 
-    def choose_one_or_required(self, required_substrings, odds=1.0):
+    def choose_item_or_required(self, required_substrings, odds=1.0) -> Optional[str]:
         """ if a choice matches a requirement, choose it. Otherwise choose at random according to odds. """
         shuffled_data = list(self.data)
         random.shuffle(shuffled_data)
 
         for substring in required_substrings:
             for x in shuffled_data:
-                if 'description' in x and substring in x['description']:
-                    return x
-        return self.choose_one(odds)
+                if substring in x['description']:
+                    return x['description']
+        return self.choose_item(odds)
 
-    def choose_one(self, odds=1.0):
-        return maybe_choose_one(self, odds)
+    def choose_item(self, odds=1.0) -> Optional[dict]:
+        return maybe_choose_item(self, odds)
 
-    def choose_many(self, odds=1.0):
-        return choose_many(self, odds)
+    def choose_many_items(self, odds=1.0) -> list[dict]:
+        return choose_many_items(self, odds)
 
 
 def load_inventory(path):
@@ -211,14 +238,18 @@ def load_scenario(path):
 
 
 def interpolate(obj, env):
-    """ interpolate strings inside structures recursively """
+    """ interpolate strings inside instructions recursively """
     if isinstance(obj, str):
         template = Template(obj)
         return template.render(env)
     elif isinstance(obj, dict):
         result = {}
         for k, v in obj.items():
-            result[k] = interpolate(v, env)
+            # don't interpolate instructions within instructions. Those need to be evaluated individually.
+            if k in {'do', 'choose_instruction', 'choose_some_instruction'}:
+                result[k] = v
+            else:
+                result[k] = interpolate(v, env)
         return result
     elif isinstance(obj, list):
         return [interpolate(item, env) for item in obj]
@@ -279,7 +310,11 @@ def run(scenario_names=None, desired_inventory=None,
     if seed is not None:
         random.seed(seed)
 
-    scenario = choose_one(scenarios)
+    scenario = choose_item(scenarios)
+
+    if not scenario:
+        print("no matching scenario. aborting")
+        return
 
     eval_scenario(desired_inventory, inventory, scenario)
 
@@ -290,49 +325,87 @@ def eval_scenario(desired_inventory, inventory, scenario):
     env = {}
 
     for instruction in scenario['instructions']:
-        # apply template substitutions
-        instruction = interpolate(instruction, env)
-        description = instruction.get('description')
-
-        odds = instruction.get('odds', 100)
-
-        # if odds is a string, treat it as a variable
-        if isinstance(odds, str):
-            odds = env[odds]
-        if odds is None:
-            odds = 100
-
-        # An instruction can alter the odds of a selection from choose_many.
-        # Less than 100 will reduce the number of chosen items while
-        # greater than 100 will increase the number of items chosen.
-        adjust_odds = odds / 100.0
-
-        # Chance of displaying a description or setting a variable (in the absence of a 'choose' statement)
-        chance = random.random()
-
-        if 'description' in instruction:
-            if 'choose_one' in instruction:
-                selection = inventory.select_by_instruction(instruction['choose_one'])
-                describe_if_not_none(description, selection.choose_one_or_required(desired_inventory, adjust_odds), env)
-            if 'choose_one_of' in instruction:
-                selection = Inventory(instruction['choose_one_of'])
-                describe_if_not_none(description, selection.choose_one_or_required(desired_inventory, adjust_odds), env)
-            elif 'choose_many' in instruction:
-                selection = inventory.select_by_instruction(instruction['choose_many'])
-                print_choices(description, selection.choose_many_including_required(desired_inventory, adjust_odds), env)
-            elif 'choose_many_of' in instruction:
-                selection = Inventory(instruction['choose_many_of'])
-                print_choices(description, selection.choose_many_including_required(desired_inventory, adjust_odds), env)
-            elif 'set' in instruction:
-                if odds == 100 or (chance < adjust_odds):
-                    eval_set(env, instruction['set'])
-            elif instruction.keys() <= {'description', 'odds', 'set'}:
-                if odds == 100 or (chance < adjust_odds):
-                    out.start_paragraph()
-                    out.println(description)
+        eval_instruction(desired_inventory, inventory, instruction, env)
 
 
-def eval_set(env, set_statement):
+def eval_instruction(desired_inventory, inventory, instruction, env):
+    # apply template substitutions
+    instruction = interpolate(instruction, env)
+
+    description = instruction.get('text')
+
+    odds = instruction.get('odds', 100)
+
+    # if odds is a string, treat it as a variable
+    if isinstance(odds, str):
+        odds = env[odds]
+    if odds is None:
+        odds = 100
+
+    # An instruction can alter the odds of a selection from choose_many_items.
+    # Less than 100 will reduce the number of chosen items while
+    # greater than 100 will increase the number of items chosen.
+    adjust_odds = odds / 100.0
+
+    # Chance of displaying a description or setting a variable (in the absence of a 'choose' statement)
+    chance = random.random()
+
+    if 'choose_item' in instruction:
+        eligible = inventory.select_by_instruction(instruction['choose_item'])
+        selection = eligible.choose_item_or_required(desired_inventory, adjust_odds)
+        if describe_item(description, selection):
+            eval_set(env, instruction)
+    elif 'choose_many_items' in instruction:
+        eligible = inventory.select_by_instruction(instruction['choose_many_items'])
+        selection = eligible.choose_many_items_including_required(desired_inventory, adjust_odds)
+        if describe_items(description, selection):
+            eval_set(env, instruction)
+    elif 'choose_text' in instruction:
+        selection = maybe_choose_item(instruction['choose_text'], adjust_odds)
+        if selection:
+            describe_choice(description, selection)
+            eval_set(env, instruction)
+            eval_set(env, selection)
+    elif 'choose_some_of' in instruction:
+        selection = choose_many_items(instruction['choose_some_of'], adjust_odds)
+        if selection:
+            describe_many(description, selection)
+            eval_set(env, instruction)
+            eval_set(env, selection)
+    elif 'choose_instruction' in instruction:
+        instruction_list = instruction['choose_instruction']
+        chosen = maybe_choose_item(instruction_list, adjust_odds)
+        if chosen:
+            out.print_paragraph(description)
+            eval_set(env, instruction)
+            eval_instruction(desired_inventory, inventory, chosen, env)
+    elif 'choose_some_instructions' in instruction:
+        if odds == 100 or (chance < adjust_odds):
+            instruction_list = instruction['choose_some_instructions']
+            chosen = choose_many_items(instruction_list, adjust_odds)
+            if chosen:
+                out.print_paragraph(description)
+                eval_set(env, instruction)
+                eval_set(env, chosen)
+                for inner in chosen:
+                    eval_instruction(desired_inventory, inventory, inner, env)
+    elif 'do' in instruction:
+        if odds == 100 or (chance < adjust_odds):
+            out.print_paragraph(description)
+            eval_set(env, instruction)
+            for inner in instruction['do']:
+                eval_instruction(desired_inventory, inventory, inner, env)
+    elif 'text' in instruction:
+        if odds == 100 or (chance < adjust_odds):
+            out.print_paragraph(description)
+            eval_set(env, instruction)
+
+
+def eval_set(env, instruction):
+    if 'set' not in instruction:
+        return
+
+    set_statement = instruction['set']
     # "set: foo" sets the foo variable to True
     # otherwise, assume it is a name and value dictionary
     if isinstance(set_statement, str):

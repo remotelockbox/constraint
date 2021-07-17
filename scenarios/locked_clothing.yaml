@@ -2,35 +2,35 @@
 - name: locked_clothing_padded
   odds: 40
   instructions:
-    - description: "First, lock on a chastity cage"
+    - text: "First, lock on a chastity cage"
       odds: 50
-    - description: "Insert a"
+    - text: "Insert a"
       odds: 20
-      choose_one:
+      choose_item:
         class: buttplug
-    - description: "Put on a diaper. You are about to be locked in it."
-    - description: "Put on"
-      choose_one:
+    - text: "Put on a diaper. You are about to be locked in it."
+    - text: "Put on"
+      choose_item:
         class: clothing
         category: locking
-    - description: "Close the lock(s) and set your release timer for"
-      choose_one_of:
-        - description: "30 minutes."
+    - text: "Close the lock(s) and set your release timer for"
+      choose_text:
+        - text: "30 minutes."
           odds: 12
-        - description: "45 minutes"
+        - text: "45 minutes"
           odds: 20
-        - description: "1 hour"
+        - text: "1 hour"
           odds: 15
-        - description: "2 hours"
+        - text: "2 hours"
           odds: 12
-        - description: "3 hours"
+        - text: "3 hours"
           odds: 10
-    - description: "lock your wrists"
+    - text: "lock your wrists"
       odds: 35
-      choose_one_of:
-        - description: "to each other with cuffs"
+      choose_text:
+        - text: "to each other with cuffs"
           odds: 30
-        - description: "in cuffs to remind you of your predicament"
+        - text: "in cuffs to remind you of your predicament"
           odds: 50
 
 
@@ -38,34 +38,34 @@
 - name: locked_clothing_and_bound
   odds: 20
   instructions:
-    - description: "First, lock on a chastity cage"
+    - text: "First, lock on a chastity cage"
       odds: 50
-    - description: "Insert a"
+    - text: "Insert a"
       odds: 30
-      choose_one:
+      choose_item:
         class: buttplug
-    - description: "Put on a diaper. You are about to be locked in it."
-    - description: "Put on"
-      choose_one:
+    - text: "Put on a diaper. You are about to be locked in it."
+    - text: "Put on"
+      choose_item:
         class: clothing
         category: locking
-    - description: "Close the lock(s) and set your release timer for"
-      choose_one_of:
-        - description: "10 minutes."
+    - text: "Close the lock(s) and set your release timer for"
+      choose_text:
+        - text: "10 minutes."
           odds: 20
-        - description: "20 minutes."
+        - text: "20 minutes."
           odds: 20
-        - description: "30 minutes"
+        - text: "30 minutes"
           odds: 20
-    - description: "lock"
-      choose_one_of:
-        - description: "your wrists at your waist through a belt"
+    - text: "lock"
+      choose_text:
+        - text: "your wrists at your waist through a belt"
           odds: 20
-        - description: "your wrists to each other with cuffs"
+        - text: "your wrists to each other with cuffs"
           odds: 30
-        - description: "your ankles together and your wrists together"
+        - text: "your ankles together and your wrists together"
           odds: 30
-    - description: "quiet yourself with a"
-      choose_one:
+    - text: "quiet yourself with a"
+      choose_item:
         class: headwear
         category: gag

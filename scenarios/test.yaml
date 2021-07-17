@@ -1,0 +1,41 @@
+# Exercises all of the scenario features. This scenario has odds=0 so it does not run by default.
+- name: test
+  odds: 0
+  instructions:
+    - text: "Insert a"
+      odds: 20
+      choose_item:
+        class: buttplug
+      set: plugged
+    - text: "With these Accessories:"
+      # increase the odds of choosing lots of items
+      odds: 400
+      choose_many_items:
+        class: accessories
+    # chooses between a single text instruction or a list of two instructions
+    - choose_instruction:
+      - text: "Wear whatever clothing and gear you fancy"
+      - do:
+        - text: "Put on"
+          choose_item:
+            class: clothing
+          set:
+            name: clothed
+            value: "chosen clothing"
+        - text: "Now that you have {{ clothed }}, put on a"
+          odds: 75
+          choose_item:
+            class: headwear
+    - text: "Tie yourself spread-eagle on the bed and set your release timer for"
+      choose_text:
+        - text: "10 minutes{% if plugged %} but stay plugged for a half hour after{% endif %}."
+          odds: 10
+        - text: "15 minutes"
+          odds: 10
+        - text: "20 minutes"
+          odds: 10
+        - text: "25 minutes"
+          odds: 10
+        - text: "30 minutes"
+          odds: 10
+

@@ -11,8 +11,6 @@ An issue tracker may supersede this file in the future.
 
 - documentation for file formats
 - trace logging with logger module
-- support sub-sequences of instructions using an inner list governed by the outer odds.
-- instruction choices (rendered differently from choose_one_of)
 - support referencing scenarios and scene fragments
 - allow scenarios to run other scenario
     - references to scenario fragments
@@ -30,3 +28,4 @@ An issue tracker may supersede this file in the future.
 - offer interactive choices to the user
 - A UI for selecting scenarios and managing inventory
 - loading scenarios by URL for easy sharing
+- rich RNG functions available in the template language for crafting timers

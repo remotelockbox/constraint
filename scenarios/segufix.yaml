@@ -2,39 +2,39 @@
 - name: segufix
   odds: 50
   instructions:
-    - description: "Insert a"
+    - text: "Insert a"
       odds: 20
-      choose_one:
+      choose_item:
         class: buttplug
-    - description: "Put on"
-      choose_one:
+    - text: "Put on"
+      choose_item:
         class: clothing
-    - description: "Accessories:"
-      choose_many:
+    - text: "Accessories:"
+      choose_many_items:
         class: accessories
         not_category: abdl
-    - description: "Strap yourself to the bed using segufix restraints"
-    - description: "Set your release timer for"
-      choose_one_of:
-        - description: "10 minutes."
+    - text: "Strap yourself to the bed using segufix restraints"
+    - text: "Set your release timer for"
+      choose_text:
+        - text: "10 minutes."
           odds: 10
-        - description: "15 minutes"
+        - text: "15 minutes"
           odds: 10
-        - description: "20 minutes"
+        - text: "20 minutes"
           odds: 10
-        - description: "25 minutes"
+        - text: "25 minutes"
           odds: 10
-        - description: "30 minutes"
+        - text: "30 minutes"
           odds: 10
-    - description: "Put on a"
+    - text: "Put on a"
       odds: 75
-      choose_one:
+      choose_item:
         class: headwear
-    - description: "lock your wrists"
-      choose_one_of:
-        - description: "at your side"
+    - text: "Lock your wrists"
+      choose_text:
+        - text: "at your side"
           odds: 50
-        - description: "onto your chest straps"
+        - text: "onto your chest straps"
           odds: 20
-        - description: "at shoulder height"
+        - text: "at shoulder height"
           odds: 5

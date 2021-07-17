@@ -2,33 +2,33 @@
 - name: spread_eagle
   odds: 50
   instructions:
-    - description: "Insert a"
+    - text: "Insert a"
       odds: 20
-      choose_one:
+      choose_item:
         class: buttplug
       set: plugged
-    - description: "With these Accessories:"
+    - text: "With these Accessories:"
       odds: 150
-      choose_many:
+      choose_many_items:
         class: accessories
         not_category: abdl
-    - description: "Put on"
-      choose_one:
+    - text: "Put on"
+      choose_item:
         class: clothing
-    - description: "Put on a"
+    - text: "Put on a"
       odds: 75
-      choose_one:
+      choose_item:
         class: headwear
-    - description: "Tie yourself spread-eagle on the bed and set your release timer for"
-      choose_one_of:
-        - description: "10 minutes{% if plugged %} but stay plugged for a half hour after{% endif %}."
+    - text: "Tie yourself spread-eagle on the bed and set your release timer for"
+      choose_text:
+        - text: "10 minutes{% if plugged %} but stay plugged for a half hour after{% endif %}."
           odds: 10
-        - description: "15 minutes"
+        - text: "15 minutes"
           odds: 10
-        - description: "20 minutes"
+        - text: "20 minutes"
           odds: 10
-        - description: "25 minutes"
+        - text: "25 minutes"
           odds: 10
-        - description: "30 minutes"
+        - text: "30 minutes"
           odds: 10
 

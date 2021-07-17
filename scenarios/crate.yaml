@@ -5,82 +5,82 @@
 - name: crate
   odds: 65
   instructions:
-    - description: "Put on"
-      choose_one:
+    - text: "Put on"
+      choose_item:
         class: clothing
-    - description: "Lock on a"
+    - text: "Lock on a"
       odds: 75
-      choose_one:
+      choose_item:
         class: headwear
         not_category: blind
-    - description: "Accessories:"
-      choose_many:
+    - text: "Accessories:"
+      choose_many_items:
         class: accessories
         not_category: bondage
-    - description: "Restrictions:"
-      choose_many_of:
-        - description: 'mitts on hands'
+    - text: "Restrictions:"
+      choose_some_of:
+        - text: 'mitts on hands'
           odds: 55
-        - description: 'leashed to end of cage'
+        - text: 'leashed to end of cage'
           odds: 30
-        - description: 'legs shackled to one end'
+        - text: 'legs shackled to one end'
           odds: 30
-    - description: "You will be locked in the cage for"
-      choose_one_of:
-        - description: "20 minutes"
+    - text: "You will be locked in the cage for"
+      choose_text:
+        - text: "20 minutes"
           odds: 15
-        - description: "25 minutes"
+        - text: "25 minutes"
           odds: 15
-        - description: "30 minutes"
+        - text: "30 minutes"
           odds: 15
-        - description: "45 minutes"
+        - text: "45 minutes"
           odds: 15
-        - description: "1 hour"
+        - text: "1 hour"
           odds: 15
 
 - name: crate_punished
   odds: 35
   instructions:
-    - description: "You will be punished!"
-    - description: "Put on a"
+    - text: "You will be punished!"
+    - text: "Put on a"
       odds: 20
-      choose_one:
+      choose_item:
         class: accessories
         category: chastity
-    - description: "Put on"
-      choose_one:
+    - text: "Put on"
+      choose_item:
         class: clothing
-    - description: "Lock on a"
+    - text: "Lock on a"
       odds: 80
-      choose_one:
+      choose_item:
         class: headwear
         category: bondage
-    - description: "You will be"
-      choose_one_of:
-        - description: "bound with your arms and legs tied to sides of the cage"
+    - text: "You will be"
+      choose_text:
+        - text: "bound with your arms and legs tied to sides of the cage"
           odds: 10
-        - description: "bound with your arms behind your back cuffed to the cage"
+        - text: "bound with your arms behind your back cuffed to the cage"
           odds: 10
-        - description: "bound with your legs and wrists locked to the ends of a
+        - text: "bound with your legs and wrists locked to the ends of a
             length-wise chain across the bottom of the cage and your collar
             locked with 18\" of chain to the front. If you can, strap your
             thighs to the chain running between your legs."
           odds: 10
-        - description: "confined in a loose straitjacket"
+        - text: "confined in a loose straitjacket"
           odds: 10
-    - description: "Accessories:"
-      choose_many:
+    - text: "Accessories:"
+      choose_many_items:
         class: accessories
         not_category: [abdl, chastity]
-    - description: "You will be locked in the cage for"
-      choose_one_of:
-        - description: "10 minutes. You must roll again after your punishment is complete."
+    - text: "You will be locked in the cage for"
+      choose_text:
+        - text: "10 minutes. You must roll again after your punishment is complete."
           odds: 10
-        - description: "15 minutes"
+        - text: "15 minutes"
           odds: 15
-        - description: "20 minutes"
+        - text: "20 minutes"
           odds: 15
-        - description: "25 minutes"
+        - text: "25 minutes"
           odds: 10
-        - description: "30 minutes"
+        - text: "30 minutes"
           odds: 5

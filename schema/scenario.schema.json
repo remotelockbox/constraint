@@ -7,58 +7,24 @@
     "$id": "scenario",
     "title": "scenario",
     "type": "object",
-    "required": [ "name", "odds", "instructions"],
+    "required": ["name", "odds", "instructions"],
     "additionalProperties": false,
     "properties": {
-      "name": {"type":  "string"},
-      "odds": {"type":  "integer"},
+      "name": {"type": "string"},
+      "odds": {"type": "integer"},
       "instructions": {
+        "$id": "instruction_list",
         "type": "array",
         "items": {
           "$id": "instruction",
-          "name": "instruction",
-          "description": "A single instruction to the player",
-          "type": "object",
-          "required": ["description"],
-          "additionalProperties": false,
-          "properties": {
-            "description": {"type": "string"},
-            "odds": {
-              "type": "integer",
-              "description": "The percent chance that this this instruction will be executed. If 'odds' is omitted, the instruction will always execute."
+          "anyOf": [
+            {
+              "$ref": "#/definitions/text_instruction"
             },
-            "set": {
-              "description": "set a variable for use in a later instruction. This will be set if this instruction is executed (based on its odds).",
-              "anyOf": [
-                {"type": "string", "description":  "setting a variable without specifying a value sets it to the boolean value 'true'"},
-                {
-                  "type": "object",
-                  "required": ["name", "value"],
-                  "additionalProperties": false,
-                  "properties": {
-                    "name": {"type": "string"},
-                    "value": {"description":  "The value can be of any type: A boolean, string, list, map, or number."}
-                  }
-                }
-              ]
-            },
-            "choose_many": {
-              "$ref": "#/definitions/inventory_selector",
-              "description": "choose any number of items from the inventory that match the criteria."
-            },
-            "choose_many_of": {
-              "$ref": "#/definitions/inline_inventory_list",
-              "description": "choose any number of the instructions listed under this entry"
-            },
-            "choose_one": {
-              "$ref": "#/definitions/inventory_selector",
-              "description": "choose one item from the inventory that matches the criteria. If no suitable match is found, this instruction is skipped."
-            },
-            "choose_one_of": {
-              "$ref": "#/definitions/inline_inventory_list",
-              "description": "choose one of the instructions listed under this entry to execute"
+            {
+              "$ref": "#/definitions/control_instruction"
             }
-          }
+          ]
         }
       }
     }
@@ -66,6 +32,82 @@
   "minItems": 1,
 
   "definitions": {
+    "text_instruction": {
+      "name": "instruction",
+      "description": "A single instruction to the player",
+      "type": "object",
+      "required": ["text"],
+      "additionalProperties": false,
+      "properties": {
+        "text": {"type": "string"},
+        "odds": {
+          "type": "integer",
+          "description": "The percent chance that this this instruction will be executed. If 'odds' is omitted, the instruction will always execute."
+        },
+        "set": {
+          "$ref": "#/definitions/set"
+        },
+        "choose_many_items": {
+          "$ref": "#/definitions/inventory_selector",
+          "description": "choose any number of items from the inventory that match the criteria."
+        },
+        "choose_some_of": {
+          "$ref": "#/definitions/text_choice",
+          "description": "display any number of the textual instructions listed under this entry"
+        },
+        "choose_item": {
+          "$ref": "#/definitions/inventory_selector",
+          "description": "choose one item from the inventory that matches the criteria. If no suitable match is found, this instruction is skipped."
+        },
+        "choose_text": {
+          "$ref": "#/definitions/text_choice",
+          "description": "print one of the items listed under this entry according to their weighted odds. Optionally prefix the text with the outer text of this instruction."
+        }
+      }
+    },
+    "control_instruction": {
+      "name": "control_instruction",
+      "description": "An instruction which changes the flow of which instructions will execute next",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {"type": "string"},
+        "odds": {
+          "type": "integer",
+          "description": "The percent chance that this this instruction will be executed. If 'odds' is omitted, the instruction will always execute."
+        },
+        "set": {
+          "$ref": "#/definitions/set"
+        },
+        "choose_instruction": {
+          "$ref": "#/items/properties/instructions",
+          "description": "choose one of the instructions listed under this entry to execute"
+        },
+        "choose_some_instructions": {
+          "$ref": "#/items/properties/instructions",
+          "description": "choose zero, one, or more of the instructions listed under this entry to execute"
+        },
+        "do": {
+          "$ref": "#/items/properties/instructions",
+          "description": "run a list of instructions"
+        }
+      }
+    },
+    "set": {
+      "description": "set a variable for use in a later instruction. This will be set if this instruction is executed (based on its odds).",
+      "anyOf": [
+        {"type": "string", "description":  "setting a variable without specifying a value sets it to the boolean value 'true'"},
+        {
+          "type": "object",
+          "required": ["name", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {"type": "string"},
+            "value": {"description":  "The value can be of any type: A boolean, string, list, map, or number."}
+          }
+        }
+      ]
+    },
     "inventory_selector": {
       "type": "object",
       "additionalProperties": false,
@@ -85,20 +127,23 @@
         }
       }
     },
-    "inline_inventory_list": {
+    "text_choice": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["description", "odds"],
+        "required": ["text", "odds"],
         "additionalProperties": false,
         "properties": {
-          "description": {
+          "text": {
             "type": "string",
             "description": "The description that is displayed to the player"
           },
           "odds": {
             "type": "integer",
             "description": "The odds that this item will be chosen relative to the other items in this list."
+          },
+          "set": {
+            "$ref": "#/definitions/set"
           }
         }
       }
