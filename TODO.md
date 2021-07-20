@@ -29,3 +29,4 @@ An issue tracker may supersede this file in the future.
 - A UI for selecting scenarios and managing inventory
 - loading scenarios by URL for easy sharing
 - rich RNG functions available in the template language for crafting timers
+- pyinstalller for binary packages
