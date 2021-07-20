@@ -1,6 +1,8 @@
 if ( -not (Test-Path -Path 'venv' -PathType Container) ) {
-    python3 -m venv venv
+    py -m venv venv
 }
-venv/bin/Activate.ps1
 
-pip3 install -r requirements.txt
+. venv\Scripts\Activate.ps1
+py -m pip install -r requirements.txt
+
+Read-Host -Prompt "Press Enter to exit"

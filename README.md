@@ -39,7 +39,7 @@ to set up a virtualenv with all the project's dependencies.
 
 You then have the choice of using the run scripts to activate the virtualenv
 and run the program or you can activate it yourself with `venv/bin/activate`
-and run `run.py` directly.
+and run `python3.9 -m constraint.cli` directly.
 
 If you use a smart editor like PyCharm or Visual Studio Code,
 you can configure your editor to auto-complete YAML and highlight errors

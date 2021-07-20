@@ -92,3 +92,7 @@ def entry():
         inventory_file=args.inventory_file,
         scenario_path=args.scenario_path,
         seed=args.seed)
+
+
+if __name__ == '__main__':
+    entry()
