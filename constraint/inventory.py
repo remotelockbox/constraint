@@ -95,7 +95,7 @@ class Inventory(Collection):
         for substring in required_substrings:
             for x in shuffled_data:
                 if substring in x['description']:
-                    return x['description']
+                    return x
         return self.choose_item(odds)
 
     def choose_item(self, odds=1.0) -> Optional[dict]:
